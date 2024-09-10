@@ -1,0 +1,18 @@
+{
+  "name": "number-guessing",
+  "version": "1.0.0",
+  "description": "A simple number guessing game where the computer randomly selects a number and the user has to guess it.",
+  "main": "bin/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "guessing-game": "./bin/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "readline-sync": "^1.4.10"
+  }
+}
