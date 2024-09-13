@@ -1,21 +1,22 @@
-const readLineSync = require('readline-sync');
-const { LEVELS } = require('./lib/constanst.lib');
-
 const getRandomNumber = () => Math.floor(Math.random() * 100) + 1;
+const { LEVELS } = require('../lib/constanst.lib');
 
-const greet = () => {
+
+const printGreeting = () => {
   console.log(`\nWelcome to the Number Guessing Game!`);
   console.log(`I'm thinking of a number between 1 and 100.`);
   console.log(`Based on the difficult level you'll have determinated chances to guess the correct number.`);
 };
 
-const chooseLevel = () => {
+const printLevels = () => {
   console.log(`\nPlease select the difficulty level:`);
   
   for (let key in LEVELS) {
     console.log(`${key}. ${LEVELS[key].name} (${LEVELS[key].chances} chances)`);
   }
-  
+}
+
+const chooseLevel = () => {
   const choice = readLineSync.question(('\nEnter your choice: '));
   const levelsKeys = Object.keys(LEVELS);
 
@@ -54,10 +55,9 @@ const runAttemps = ({chances, thoughtNumber}) => {
     console.log(`I am sorry your attemps have ended!`);
   }
 }
- 
+
 const main = () => {
-  const thoughtNumber = getRandomNumber();
-  greet();  
+  printGreeting();  
   const level = chooseLevel();
   printLevelMessage(level);
   runAttemps({chances: level.chances, thoughtNumber});
