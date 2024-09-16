@@ -1,68 +1,129 @@
+const { 
+  GAME_LEVELS,
+  GAME_STEPS
+} = require('../lib/constanst.lib');
+const { GameModel } = require('../model/game.model');
+const { GameView } = require('../view/game.view');
 const getRandomNumber = () => Math.floor(Math.random() * 100) + 1;
-const { LEVELS } = require('../lib/constanst.lib');
 
+const model = new GameModel();
+const view = new GameView();
 
-const printGreeting = () => {
-  console.log(`\nWelcome to the Number Guessing Game!`);
-  console.log(`I'm thinking of a number between 1 and 100.`);
-  console.log(`Based on the difficult level you'll have determinated chances to guess the correct number.`);
-};
+class GameController {
+  init = () => {
+    model.setStep(GAME_STEPS[1]);
+    this.run();
+  };
 
-const printLevels = () => {
-  console.log(`\nPlease select the difficulty level:`);
-  
-  for (let key in LEVELS) {
-    console.log(`${key}. ${LEVELS[key].name} (${LEVELS[key].chances} chances)`);
-  }
-}
+  greet = () => {
+    view.printGreeting();
+    this.runStep(GAME_STEPS[2]);
+  };
 
-const chooseLevel = () => {
-  const choice = readLineSync.question(('\nEnter your choice: '));
-  const levelsKeys = Object.keys(LEVELS);
+  showInstructions = () => {
+    view.printLevels({ levels: GAME_LEVELS });
+    this.runStep(GAME_STEPS[3]);
+  };
 
-  if (!levelsKeys.includes(choice)) {
-    console.log(`\nOption ${choice} is not valid, bye!`);
-    return;
-  }
-
-  return LEVELS[choice];
-};
-
-const printLevelMessage = (level) => {
-  console.log(`\nGreat! You have selected the ${level.name} difficult level.`);
-  console.log(`You have ${level.chances} chances to guess the number.`);
-  console.log(`Let's start the game!`);
-}
-
-const runAttemps = ({chances, thoughtNumber}) => {
-  let attemp = 1;
-  let numberIsGuessed = false;
-
-  do {
-    const guess = readLineSync.question(('\nEnter your guess: '));
-    if (thoughtNumber === Number(guess)) {
-      console.log(`Congratulations! You guessed the correct number in ${attemp} attempts.`);
-      numberIsGuessed = true;
-      chances = 0;
+  chooseLevel = () => {
+    const choice = view.getChoice({ type: 'choice' });
+    const levelsKeys = Object.keys(GAME_LEVELS);
+    
+    if (!levelsKeys.includes(choice)) {
+      view.printInvalidChoice({ choice });
+      return;
     } else {
-      console.log(`Incorrect! The number is ${thoughtNumber < guess ? 'less': 'greater'} than ${guess}.`);
-      chances = chances - 1;
-      attemp = attemp + 1;
+      model.setChosenLevel(GAME_LEVELS[choice]);
+      model.setNumberToGuess(getRandomNumber());
+      this.runStep(GAME_STEPS[4]);
     }
-  } while (chances > 0 && !numberIsGuessed);
+  };
 
-  if (!numberIsGuessed && chances === 0) {
-    console.log(`I am sorry your attemps have ended!`);
-  }
+  showChoosenLevel = () => {
+    const level = model.getChosenLevel();
+    
+    view.printLevelMessage({ level });
+    this.runStep(GAME_STEPS[5]);
+  };
+
+  runAttemp = () => {
+    const numberToGuess = model.getNumberToGuess();
+    const attemps = model.getAttemps();
+    const guess = view.getChoice({ type:'guess' });
+
+    model.setAttemps(attemps + 1);
+    model.setGuessChoice(guess);
+    model.setIsNumberGuessed(Number(guess) === Number(numberToGuess));
+    this.runStep(GAME_STEPS[6]);
+  };
+
+  evaluate = () => {
+    const attemps = model.getAttemps();
+    const { chances } = model.getChosenLevel();
+    const isNumberGuessed = model.getIsNumberGuessed();
+    const hasMoreChances = attemps < chances;
+    
+    if (isNumberGuessed || !hasMoreChances) {
+      this.runStep(GAME_STEPS[7]);
+    } else {
+      this.tryAgain();
+      this.runStep(GAME_STEPS[5]);
+    }
+  };
+
+  tryAgain = () => {
+    const numberToGuess = model.getNumberToGuess();
+    const guess = model.getGuessChoice();
+      
+    view.printGuessFailMessage({ numberToGuess, guess });
+  };
+
+  showResult = () => {
+    const attemps = model.getAttemps();
+    const isNumberGuessed = model.getIsNumberGuessed();
+    
+    if (isNumberGuessed) {
+      view.printCongratsMessage({ attemps });
+    } else {
+      view.printAttempsEndMessage();
+    }
+  };
+
+  runStep = (step) => {
+    model.setStep(step);
+    this.run();
+  };
+
+  run = () => {
+    const currentStep = model.getStep();
+    
+    switch (currentStep) {
+      case GAME_STEPS[1]:
+        this.greet();
+        break;
+      case GAME_STEPS[2]:
+        this.showInstructions();
+        break;
+      case GAME_STEPS[3]:
+        this.chooseLevel();
+        break
+      case GAME_STEPS[4]:
+        this.showChoosenLevel();
+        break;
+      case GAME_STEPS[5]:
+        this.runAttemp();
+        break;
+      case GAME_STEPS[6]:
+          this.evaluate();
+          break;
+      case GAME_STEPS[7]:
+        this.showResult();
+        break;
+      default:
+        break;
+    }
+  };
 }
 
-const main = () => {
-  printGreeting();  
-  const level = chooseLevel();
-  printLevelMessage(level);
-  runAttemps({chances: level.chances, thoughtNumber});
-};
 
-module.exports = {
-  main
-};
+module.exports = { GameController };

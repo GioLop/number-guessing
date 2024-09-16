@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
-const { main } = require("../src/controller");
+const { GameController } = require("../src/controller/game.controller");
 
-main();
+const controller = new GameController();
+
+controller.init();
