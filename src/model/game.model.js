@@ -48,7 +48,16 @@ class GameModel {
   setGuessChoice = (number) => {
     this.guessChoice = number;
     return this.getGuessChoice();
-  }
+  };
+
+  restore = () => {
+    this.chosenLevel = { name: '', chances: 0 };
+    this.attemps = 0;
+    this.step = '';
+    this.isNumberGuessed = false;
+    this.numberToGuess = 0;
+    this.guessChoice = 0;
+  };
 };
 
 module.exports = {

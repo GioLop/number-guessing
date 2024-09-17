@@ -15,11 +15,6 @@ class GameView {
     }
   };
   
-  getChoice = ({ type = 'choice' }) => {
-    const choice = readlineSync.question((`\nEnter your ${type}: `));
-    return choice
-  };
-  
   printLevelMessage = ({ level }) => {
     console.log(`\nGreat! You have selected the ${level.name} difficult level.`);
     console.log(`You have ${level.chances} chances to guess the number.`);
@@ -39,10 +34,20 @@ class GameView {
   };
   
   printInvalidChoice = ({ choice }) => {
-    console.log(`\nOption ${choice} is not valid, bye!`);
+    console.log(`\nOption ${choice} is not valid, try again!`);
+  };
+
+  printQuitMessage = () => {
+    console.log('\nThank you for playing this game, see you later!');
+  };
+
+  getChoice = ({ type = 'choice' }) => {
+    return readlineSync.question((`\nEnter your ${type}: `));
+  };
+
+  getAnotherRound = () => {
+    return readlineSync.keyInYN(`\nDo yoy want to play another round?`);
   };
 };
-
-
 
 module.exports = { GameView };

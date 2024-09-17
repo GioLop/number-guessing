@@ -12,8 +12,8 @@ const GAME_STEPS = {
   5: 'Guess Attemp',
   6: 'Evaluate guess',
   7: 'Show Result',
-  9: 'Ask for other round',
-  10: 'End Game'
+  8: 'Ask for other round',
+  9: 'End Game'
 };
 
 module.exports = {

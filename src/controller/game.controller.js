@@ -31,7 +31,7 @@ class GameController {
     
     if (!levelsKeys.includes(choice)) {
       view.printInvalidChoice({ choice });
-      return;
+      this.runStep(GAME_STEPS[3]);
     } else {
       model.setChosenLevel(GAME_LEVELS[choice]);
       model.setNumberToGuess(getRandomNumber());
@@ -87,6 +87,22 @@ class GameController {
     } else {
       view.printAttempsEndMessage();
     }
+
+    this.runStep(GAME_STEPS[8]);
+  };
+
+  askAnotherRound = () => {
+    const another = view.getAnotherRound();
+    if (another) {
+      model.restore();
+      this.runStep(GAME_STEPS[2]);
+    } else {
+      this.runStep(GAME_STEPS[9]);
+    }
+  };
+
+  quit = () => {
+    view.printQuitMessage();
   };
 
   runStep = (step) => {
@@ -119,11 +135,14 @@ class GameController {
       case GAME_STEPS[7]:
         this.showResult();
         break;
+      case GAME_STEPS[8]:
+        this.askAnotherRound();
+        break;
       default:
+        this.quit();
         break;
     }
   };
 }
-
 
 module.exports = { GameController };
