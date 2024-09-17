@@ -2,9 +2,9 @@ const {
   GAME_LEVELS,
   GAME_STEPS
 } = require('../lib/constanst.lib');
+const { getRandomNumber } = require('../lib/number.lib');
 const { GameModel } = require('../model/game.model');
 const { GameView } = require('../view/game.view');
-const getRandomNumber = () => Math.floor(Math.random() * 100) + 1;
 
 const model = new GameModel();
 const view = new GameView();

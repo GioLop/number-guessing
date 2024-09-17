@@ -46,7 +46,7 @@ class GameView {
   };
 
   getAnotherRound = () => {
-    return readlineSync.keyInYN(`\nDo yoy want to play another round?`);
+    return readlineSync.keyInYN(`\nDo you want to play another round?`);
   };
 };
 
